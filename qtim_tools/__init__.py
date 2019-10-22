@@ -1,9 +1,9 @@
-import qtim_features
-import qtim_dce
-import qtim_learning
-import qtim_utilities
-import qtim_preprocessing
-import qtim_visualization
+from . import qtim_features
+from . import qtim_dce
+from . import qtim_learning
+from . import qtim_utilities
+from . import qtim_preprocessing
+from . import qtim_visualization
 
-import qtim_pipelines
-import test_data
+from . import qtim_pipelines
+from . import test_data
