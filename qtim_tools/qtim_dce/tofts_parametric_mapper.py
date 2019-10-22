@@ -2,7 +2,7 @@
 
 """
 
-from __future__ import division
+
 
 # TODO Clean up these imports..
 # Import nifti_util. It only fails if this is script is not loaded as a package, which it should be.
@@ -23,7 +23,7 @@ import time
 import fnmatch
 import csv
 
-from Queue import Queue
+from queue import Queue
 from threading import Thread
 from multiprocessing.pool import Pool
 from multiprocessing import freeze_support
@@ -33,10 +33,10 @@ def calc_DCE_properties_single(filepath, T1_tissue=1000, T1_blood=1440, relaxivi
     """ This is a master function that creates ktrans, ve, and auc values from raw intensity 1D-4D volumes.
     """
 
-    print '\n'
+    print('\n')
 
     # NaN values are cleaned for ease of calculation.
-    if isinstance(filepath, basestring):
+    if isinstance(filepath, str):
         image = np.nan_to_num(nifti_2_numpy(filepath))
     else:
         image = np.nan_to_num(np.copy(filepath))
@@ -44,7 +44,7 @@ def calc_DCE_properties_single(filepath, T1_tissue=1000, T1_blood=1440, relaxivi
     # Unlikely that this circumstance will apply to 4D images in the future..
     dimension = len(image.shape)
     if dimension > 4:
-        print 'Error: Images greater than dimension 4 are currently not supported. Skipping this volume...'
+        print('Error: Images greater than dimension 4 are currently not supported. Skipping this volume...')
         return []
 
     # Convenience variables created from input parameters.
@@ -65,7 +65,7 @@ def calc_DCE_properties_single(filepath, T1_tissue=1000, T1_blood=1440, relaxivi
 
     # Error-catching for broken AIFs.
     if AIF == []:
-        print 'Problem calculating AIF. Skipping this volume...'
+        print('Problem calculating AIF. Skipping this volume...')
         return []
 
     # Signal conversion is required in order for raw data to interface with the Tofts model.
@@ -106,7 +106,7 @@ def retreive_data_from_files(filepath, label_file, label_mode, label_suffix, lab
         elif os.path.isfile(split_path[0] + AIF_label_suffix + '.nii.gz'):
             label_image = nifti_2_numpy(split_path[0] + label_suffix + '.nii.gz')
         else:
-            print "No labelmap found at provided label suffix. Continuing without..."
+            print("No labelmap found at provided label suffix. Continuing without...")
             label_image = []
     else:
         label_image = []
@@ -122,22 +122,22 @@ def retreive_data_from_files(filepath, label_file, label_mode, label_suffix, lab
             elif os.path.isfile(split_path[0] + AIF_label_suffix + '.nii.gz'):
                 AIF_label_image = nifti_2_numpy(split_path[0] + AIF_label_suffix + '.nii.gz')
             else:
-                print "No AIF labelmap found at provided label suffix. Continuing without..."
+                print("No AIF labelmap found at provided label suffix. Continuing without...")
                 AIF_label_image = []
         elif label_mode == 'separate':
-            print 'No label found for this AIF. If AIF label is in the same file as ROI, change the label_mode parameter to \'combined\'. Skipping this volume...'
+            print('No label found for this AIF. If AIF label is in the same file as ROI, change the label_mode parameter to \'combined\'. Skipping this volume...')
             AIF_label_image = []
         elif label_mode == 'combined':
             if label_file != []:
                 AIF_label_image = np.copy(label_image)
                 AIF_label_image[label_image != AIF_label_value] = 0
             else:
-                print 'No label found for this AIF. If the AIF label is in a separate file from the ROI, change the label_mode parameter to \'separate\'. If not, be sure that the AIF_label_value parameter matches the AIF label value in your ROI. Skipping this volume...'
+                print('No label found for this AIF. If the AIF label is in a separate file from the ROI, change the label_mode parameter to \'separate\'. If not, be sure that the AIF_label_value parameter matches the AIF label value in your ROI. Skipping this volume...')
                 AIF_label_image = []
     elif AIF_mode == 'population':
         AIF_label_image = []
     else:
-        print 'Invalid AIF_mode parameter. This volume will be skipped. \n'
+        print('Invalid AIF_mode parameter. This volume will be skipped. \n')
         AIF_label_image = []
 
     # Check for a provided T1 mapping file, which will be relevant to signal conversion.
@@ -151,12 +151,12 @@ def retreive_data_from_files(filepath, label_file, label_mode, label_suffix, lab
             T1_image = nifti_2_numpy(split_path[0] + T1_map_suffix + '.nii.gz' + split_path[1])
         else:
             T1_image = []
-            print 'No T1 map found at provided T1 map file suffix. Continuing without... \n'       
+            print('No T1 map found at provided T1 map file suffix. Continuing without... \n')       
     else:
         T1_image = []
 
     if T1_image != [] and (image.shape[0:-1] != T1_image.shape):
-        print 'T1 map and DCE image are not the same shape. T1 map processing will be skipped. \n'
+        print('T1 map and DCE image are not the same shape. T1 map processing will be skipped. \n')
         T1_image = []
 
 
@@ -171,28 +171,28 @@ def retreive_data_from_files(filepath, label_file, label_mode, label_suffix, lab
                     AIF = [value for value in AIF if value != '']
 
                     if len(AIF) != image.shape[-1]:
-                        print 'AIF does not have as many timepoints as image. Assuming AIF timepoints are post-baseline, and filling pre-baseline points with zeros. \n'
+                        print('AIF does not have as many timepoints as image. Assuming AIF timepoints are post-baseline, and filling pre-baseline points with zeros. \n')
                         new_AIF = np.zeros(image.shape[-1], dtype=float)
                         new_AIF[-len(AIF):] = AIF
                         AIF = new_AIF
                 except:
-                    print "Error reading AIF values file. AIF reader requires text files with semicolons (;) as delimiters. Skipping this volume... \n"
+                    print("Error reading AIF values file. AIF reader requires text files with semicolons (;) as delimiters. Skipping this volume... \n")
                     AIF = []
             else:
                 AIF_value_data = []
-                print 'No AIF values found at provided AIF value suffix. Continuing without... \n'   
-        if isinstance(AIF_value_data, basestring):
+                print('No AIF values found at provided AIF value suffix. Continuing without... \n')   
+        if isinstance(AIF_value_data, str):
             try:
                 AIF = np.loadtxt(AIF_value_data, dtype=object, delimiter=';')
                 AIF = [value for value in AIF if value != '']
 
                 if len(AIF) != image.shape[-1]:
-                    print 'AIF does not have as many timepoints as image. Assuming AIF timepoints are post-baseline, and filling pre-baseline points with zeros. \n'
+                    print('AIF does not have as many timepoints as image. Assuming AIF timepoints are post-baseline, and filling pre-baseline points with zeros. \n')
                     new_AIF = np.zeros(image.shape[-1], dtype=float)
                     new_AIF[-len(AIF):] = AIF
                     AIF = new_AIF
             except:
-                print "Error reading AIF values file. AIF reader requires text files with semicolons (;) as delimiters. Skipping this volume... \n"
+                print("Error reading AIF values file. AIF reader requires text files with semicolons (;) as delimiters. Skipping this volume... \n")
                 AIF = []
         elif AIF_value_data != []:
             AIF = AIF_value_data
@@ -249,9 +249,9 @@ def simplex_optimize(contrast_image_numpy, contrast_AIF_numpy, time_interval_sec
         subunits = []
         sublength = np.floor(contrast_image_numpy.shape[0] / processes)
 
-        print 'Dividing data into ' + str(processes) + ' subgroups of length.. ' + str(int(sublength)) + ' units.'
+        print('Dividing data into ' + str(processes) + ' subgroups of length.. ' + str(int(sublength)) + ' units.')
 
-        for i in xrange(processes - 1):
+        for i in range(processes - 1):
             subunits += [contrast_image_numpy[int(i*sublength):int((i+1)*sublength),...]]
 
         subunits += [contrast_image_numpy[int((processes - 1)*sublength):,...]]
@@ -308,7 +308,7 @@ def simplex_optimize_loop(contrast_image_numpy, contrast_AIF_numpy, time_interva
         block_B = (capital_E - (capital_E * log_e) - 1)
         block_ktrans = ktrans * time_interval / log_e_2
 
-        for i in xrange(1, np.size(contrast_AIF_numpy)):
+        for i in range(1, np.size(contrast_AIF_numpy)):
             term_A = contrast_AIF_numpy[i] * block_A
             term_B = contrast_AIF_numpy[i-1] * block_B
             append(estimated_concentration[-1]*capital_E + block_ktrans * (term_A - term_B))
@@ -367,7 +367,7 @@ def simplex_optimize_loop(contrast_image_numpy, contrast_AIF_numpy, time_interva
         ktrans = result_params[0]
         ve = result_params[1]
 
-        print [ktrans, ve, auc]
+        print([ktrans, ve, auc])
 
         output_image[index + (0,)] = ktrans
         output_image[index + (1,)] = ve
@@ -407,7 +407,7 @@ def calc_DCE_properties_batch(folder, regex='', recursive=False, T1_tissue=1000,
         for suffix in suffix_exclusion_regex:
             if suffix_exclusion_regex not in volume:
 
-                print 'Working on volume located at... ' + volume
+                print('Working on volume located at... ' + volume)
 
                 calc_DCE_properties_single(volume, T1_tissue, T1_blood, relaxivity, TR, TE, scan_time_seconds, hematocrit, injection_start_time_seconds, flip_angle_degrees, label_file, label_suffix, label_value, mask_value, mask_threshold, T1_map_file, T1_map_suffix, AIF_label_file,  AIF_value_data, convert_AIF_values, AIF_mode, AIF_label_suffix, AIF_label_value, label_mode, param_file, default_population_AIF, initial_fitting_function_parameters, outputs, outfile_prefix, processes, gaussian_blur, gaussian_blur_axis)
 

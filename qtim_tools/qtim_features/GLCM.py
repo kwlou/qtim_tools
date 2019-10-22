@@ -8,7 +8,7 @@
     what, this function could use a lot of cleaning.
 """
 
-from __future__ import division
+
 
 from qtim_tools.qtim_utilities.nifti_util import assert_nD
 
@@ -22,8 +22,8 @@ def glcm_2d_aggregate(image, distances, angles, levels=None, symmetric=False, no
 
     if test:
         image = np.zeros((20,20))
-        for x in xrange(1,11):
-            for y in xrange(1,11):
+        for x in range(1,11):
+            for y in range(1,11):
                 image[x,y] = x*y
         return glcm_2d(image, distances, angles, levels, symmetric, normed=False, mask_value=mask_value)
 
@@ -55,7 +55,7 @@ def glcm_2d_aggregate(image, distances, angles, levels=None, symmetric=False, no
 
     if aggregate_axis == -1:
         aggregate_axis = np.argmin(image.shape)
-        print '2-D GLCM aggregation axis chosen automatically at ' + str(aggregate_axis)
+        print('2-D GLCM aggregation axis chosen automatically at ' + str(aggregate_axis))
 
     nSlice = image.shape[aggregate_axis]
     result_GLCM = np.zeros((levels, levels, len(distances), len(angles)),
@@ -65,14 +65,14 @@ def glcm_2d_aggregate(image, distances, angles, levels=None, symmetric=False, no
 
     if method == "maximal_slice":
 
-        image_slice = np.squeeze(image[[slice(None) if k != aggregate_axis else slice(0, 1) for k in xrange(3)]])
+        image_slice = np.squeeze(image[[slice(None) if k != aggregate_axis else slice(0, 1) for k in range(3)]])
         maximal = [0, np.zeros_like(image_slice)]
 
-        for i in xrange(nSlice):
+        for i in range(nSlice):
             
             # Full disclosure: I'm not entirely sure how this works, 
             # but this code slices and image by an arbitrary axis
-            image_slice = np.squeeze(image[[slice(None) if k != aggregate_axis else slice(i, i+1) for k in xrange(3)]])
+            image_slice = np.squeeze(image[[slice(None) if k != aggregate_axis else slice(i, i+1) for k in range(3)]])
 
             test_maximal = (image_slice != mask_value).sum()
 
@@ -85,11 +85,11 @@ def glcm_2d_aggregate(image, distances, angles, levels=None, symmetric=False, no
 
     elif method == "sum" or method == "average":
 
-        for i in xrange(nSlice):
+        for i in range(nSlice):
             
             # Full disclosure: I'm not entirely sure how this works, 
             # but this code slices an image by an arbitrary axis
-            image_slice = np.squeeze(image[[slice(None) if k != aggregate_axis else slice(i, i+1) for k in xrange(3)]])
+            image_slice = np.squeeze(image[[slice(None) if k != aggregate_axis else slice(i, i+1) for k in range(3)]])
             slice_GLCM = glcm_2d(image_slice, distances, angles, levels, symmetric, normed=False, mask_value=mask_value)
             if method == "sum":
                 result_GLCM += slice_GLCM
@@ -347,7 +347,7 @@ def glcm_features_calc(P, props=['contrast', 'dissimilarity', 'homogeneity', 'AS
     assert num_dist > 0
     assert num_angle > 0
 
-    if isinstance(props, basestring):
+    if isinstance(props, str):
         props = [props, ]
     num_props = len(props)
 
@@ -384,8 +384,8 @@ def glcm_features_calc(P, props=['contrast', 'dissimilarity', 'homogeneity', 'AS
             results[:, :, p_idx] = np.apply_over_axes(np.sum, (P ** 2), axes=(0, 1))[0, 0]
         elif current_prop == 'correlation':
             tempresults = np.zeros((num_dist, num_angle), dtype=np.float64)
-            I = np.array(range(num_level)).reshape((num_level, 1, 1, 1))
-            J = np.array(range(num_level)).reshape((1, num_level, 1, 1))
+            I = np.array(list(range(num_level))).reshape((num_level, 1, 1, 1))
+            J = np.array(list(range(num_level))).reshape((1, num_level, 1, 1))
             diff_i = I - np.apply_over_axes(np.sum, (I * P), axes=(0, 1))[0, 0]
             diff_j = J - np.apply_over_axes(np.sum, (J * P), axes=(0, 1))[0, 0]
 
@@ -426,7 +426,7 @@ def glcm_features(image, distances=[1,2,3,4,5], angles=[0, np.pi/4, np.pi/2, 3*n
         return glcm_feats
 
 def feature_count(distances=[1,2,3,4,5], angles=[0, np.pi/4, np.pi/2, 3*np.pi/4], props=['contrast', 'dissimilarity', 'homogeneity', 'ASM', 'energy', 'entropy', 'correlation']):
-    if isinstance(props, basestring):
+    if isinstance(props, str):
         props = [props,]
     return len(distances) * len(angles) * len(props)
 
@@ -444,4 +444,4 @@ if __name__ == "__main__":
     test_array = np.random.randint(0,5,(25,25,25))
     np.set_printoptions(threshold=np.inf)
     np.set_printoptions(suppress=True)
-    print glcm_features_calc(glcm_2d_aggregate(test_array, [1,2], [0, np.pi/4, np.pi/2, 3*np.pi/4], levels=5, symmetric=True, method='maximal_slice'), out='list', distances=[1,2], angles=[0, np.pi/4, np.pi/2, 3*np.pi/4])
+    print(glcm_features_calc(glcm_2d_aggregate(test_array, [1,2], [0, np.pi/4, np.pi/2, 3*np.pi/4], levels=5, symmetric=True, method='maximal_slice'), out='list', distances=[1,2], angles=[0, np.pi/4, np.pi/2, 3*np.pi/4]))

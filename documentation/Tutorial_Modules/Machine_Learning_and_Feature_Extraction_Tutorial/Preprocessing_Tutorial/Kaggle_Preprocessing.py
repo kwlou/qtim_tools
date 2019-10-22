@@ -158,7 +158,7 @@ plt.show()
 
 def resample(image, scan, new_spacing=[1,1,1]):
     # Determine current pixel spacing
-    spacing = map(float, ([scan[0].SliceThickness] + scan[0].PixelSpacing))
+    spacing = list(map(float, ([scan[0].SliceThickness] + scan[0].PixelSpacing)))
     spacing = np.array(list(spacing))
 
     resize_factor = spacing / new_spacing
@@ -179,8 +179,8 @@ def resample(image, scan, new_spacing=[1,1,1]):
 # In[6]:
 
 pix_resampled, spacing = resample(first_patient_pixels, first_patient, [1,1,1])
-print("Shape before resampling\t", first_patient_pixels.shape)
-print("Shape after resampling\t", pix_resampled.shape)
+print(("Shape before resampling\t", first_patient_pixels.shape))
+print(("Shape after resampling\t", pix_resampled.shape))
 
 
 # # 3D plotting the scan

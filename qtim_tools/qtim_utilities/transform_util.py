@@ -3,7 +3,7 @@ import math
 import os
 
 # from nifti_util import save_numpy_2_nifti
-from format_util import convert_input_2_numpy
+from .format_util import convert_input_2_numpy
 
 from scipy.ndimage.interpolation import affine_transform, geometric_transform
 from subprocess import call
@@ -18,7 +18,7 @@ def save_numpy_2_nifti(image_numpy, reference_nifti_filepath='', output_path=[])
         nifti_image = nib.load(reference_nifti_filepath)
         image_affine = nifti_image.affine
     else:
-        print 'Warning: no reference nifti file provided. Generating empty header.'
+        print('Warning: no reference nifti file provided. Generating empty header.')
         image_affine = generate_identity_affine()
 
     output_nifti = nib.Nifti1Image(image_numpy, image_affine)
@@ -93,7 +93,7 @@ def generate_rotation_affine(axis=0, rotation_degrees=1):
                     [0,0,0,1]])
 
     else:
-        print 'Error, can only accept axes 0-2 as input to axis parameter.'
+        print('Error, can only accept axes 0-2 as input to axis parameter.')
         return []
  
     return R
@@ -116,7 +116,7 @@ def generate_translation_affine(axis=0, translation_distance=10):
         T = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,translation_distance,1]]
     
     else:
-        print 'Error, can only accept axes 0-2 as input to axis parameter.'
+        print('Error, can only accept axes 0-2 as input to axis parameter.')
         return []
 
     return np.array(T)
@@ -161,7 +161,7 @@ def apply_affine(input_volume, affine_matrix, method="python", Slicer_path="Slic
     # return convert_input_2_numpy('temp_out.nii.gz')
 
     else:
-        print 'Invalid method parameter. Returning []'
+        print('Invalid method parameter. Returning []')
         return []
 
 def compose_affines(affine_matrix_1, affine_matrix_2):
@@ -181,13 +181,13 @@ def compose_affines(affine_matrix_1, affine_matrix_2):
 
         output_matrix = np.zeros_like(affine_matrix_1)
 
-        for t in xrange(affine_matrix_1.shape[-1]):
+        for t in range(affine_matrix_1.shape[-1]):
             output_matrix[..., t] = np.matmul(affine_matrix_1[..., t], affine_matrix_2[...,t])
 
         return output_matrix
 
     else:
-        print 'Error: input matrix has incorrect number of dimensions (4x4xN) for comptuation'
+        print('Error: input matrix has incorrect number of dimensions (4x4xN) for comptuation')
         return []
 
 def save_affine(affine_matrix, output_filename, output_format="itk_affine"):
@@ -214,7 +214,7 @@ def save_affine(affine_matrix, output_filename, output_format="itk_affine"):
         f.write('FixedParameters: ' + translate_string + '\n')
 
     else:
-        print 'Invalid output format. Returning []'
+        print('Invalid output format. Returning []')
         return []
 
 
@@ -235,16 +235,16 @@ def generate_motion_jerk(duration, timepoint=0, rotation_peaks=[3, 3, 0], total_
     midpoint = timepoint + np.round(endpoint - timepoint)/2
     rotation_matrix_increment = np.array([float(x)/float(timepoint-endpoint) for x in rotation_peaks])
 
-    print timepoint, endpoint, duration, total_timepoints
+    print(timepoint, endpoint, duration, total_timepoints)
 
     if endpoint > total_timepoints:
-        print 'Invalid timepoint, longer than the duration of the volume'
+        print('Invalid timepoint, longer than the duration of the volume')
 
     rotation_direction = np.array([0,0,0])
 
     output_motion_array = np.zeros((4,4,total_timepoints), dtype=float)
 
-    for t in xrange(total_timepoints):
+    for t in range(total_timepoints):
 
         current_rotation_matrix = generate_identity_affine()
 
@@ -283,13 +283,13 @@ def generate_motion_tilt(timepoint, duration, rotation_peaks=[3, 3, 0], input_fi
     rotation_matrix_increment = np.array([float(x)/float(timepoint-endpoint) for x in rotation_peaks])
 
     if endpoint > total_timepoints:
-        print 'Invalid timepoint, longer than the duration of the volume'
+        print('Invalid timepoint, longer than the duration of the volume')
 
     rotation_direction = np.array([0,0,0])
 
     output_motion_array = np.zeros((4,4,total_timepoints), dtype=float)
 
-    for t in xrange(total_timepoints):
+    for t in range(total_timepoints):
 
         current_rotation_matrix = generate_identity_affine()
 
@@ -329,8 +329,8 @@ def get_jacobian_determinant(input_volume):
 
     temp_jacobian = np.zeros((input_numpy.shape[0:-1] + (input_numpy.shape[-1],input_numpy.shape[-1])), dtype=float)
 
-    for r in xrange(input_numpy.shape[-1]):
-        for c in xrange(input_numpy.shape[-1]):
+    for r in range(input_numpy.shape[-1]):
+        for c in range(input_numpy.shape[-1]):
             temp_jacobian[...,r,c] = np.gradient(input_numpy[..., c])[r]
 
     return np.linalg.det(temp_jacobian)
@@ -347,8 +347,8 @@ def return_jacobian_matrix(input_volume, index):
 
     temp_jacobian = np.zeros((input_numpy.shape[0:-1] + (input_numpy.shape[-1],input_numpy.shape[-1])), dtype=float)
 
-    for r in xrange(input_numpy.shape[-1]):
-        for c in xrange(input_numpy.shape[-1]):
+    for r in range(input_numpy.shape[-1]):
+        for c in range(input_numpy.shape[-1]):
             temp_jacobian[...,r,c] = np.gradient(input_numpy[..., c])[r]
 
     return temp_jacobian[index[0],index[1],index[2], :,:]

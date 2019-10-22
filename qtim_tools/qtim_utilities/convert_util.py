@@ -1,6 +1,6 @@
 
-from nrrd_util import nrrd_2_numpy
-from nifti_util import nifti_2_numpy
+from .nrrd_util import nrrd_2_numpy
+from .nifti_util import nifti_2_numpy
 
 def nifti_4d_2_nrrd_4d(input_nifti, output_nrrd, TR, TE):
 

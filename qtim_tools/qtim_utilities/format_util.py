@@ -8,10 +8,10 @@
 """
 
 # from nifti_util import nifti_2_numpy
-from dicom_util import dcm_2_numpy
-from nrrd_util import nrrd_2_numpy
-from image_util import img_2_numpy
-from nifti_util import nifti_2_numpy
+from .dicom_util import dcm_2_numpy
+from .nrrd_util import nrrd_2_numpy
+from .image_util import img_2_numpy
+from .nifti_util import nifti_2_numpy
 
 import numpy as np
 import nibabel as nib
@@ -19,9 +19,9 @@ import nibabel as nib
 # This is magic code for Python 3 compatability. Of course
 # this package isn't Python 3 compatible, but why not start now.
 try:
-  basestring
+  str
 except NameError:
-  basestring = str
+  str = str
 
 def itk_transform_2_numpy(filepath):
 
@@ -90,7 +90,7 @@ def check_format(filepath):
             break
 
     if format_type is None:
-        print 'Error! Input file extension is not supported by qtim_tools. Returning None.'
+        print('Error! Input file extension is not supported by qtim_tools. Returning None.')
     else:
         return format_type
 
@@ -117,12 +117,12 @@ def convert_input_2_numpy(input_data, input_format=None, return_header=False, re
 
     return_items = []
 
-    if isinstance(input_data, basestring):
+    if isinstance(input_data, str):
         if input_format is None:
             input_format = check_format(input_data)
 
         if input_format is None:
-            print 'Cannot understand input format for numpy conversion, returning None.'
+            print('Cannot understand input format for numpy conversion, returning None.')
             if return_header:
                 return None, None
             else:

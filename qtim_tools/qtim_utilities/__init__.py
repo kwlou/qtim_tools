@@ -1,7 +1,7 @@
-import nifti_util
-import nrrd_util
-import dicom_util
-import format_util
-import file_util
-import array_util
-import text_util
+from . import nifti_util
+from . import nrrd_util
+from . import dicom_util
+from . import format_util
+from . import file_util
+from . import array_util
+from . import text_util

@@ -1,14 +1,14 @@
 """ This is a continuously evolving test script for de-bugging purposes.
 """
 
-import qtim_tools
+from . import qtim_tools
 
 import os
 import numpy as np
 import fnmatch
 from shutil import copy
 
-from qtim_tools.qtim_utilities.dicom_util import dcm_2_numpy, dcm_2_nifti
+from .qtim_tools.qtim_utilities.dicom_util import dcm_2_numpy, dcm_2_nifti
 
 folder = 'C:/Users/azb22/Documents/Scripting/Prostate_Texture/Test'
 outfile1 = 'C:/Users/azb22/Documents/Scripting/Prostate_Texture/no_normalize.csv'

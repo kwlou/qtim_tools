@@ -1,4 +1,4 @@
-import label_statistics
-import dti_conversion
-import deep_learning
-import coregistration
+from . import label_statistics
+from . import dti_conversion
+from . import deep_learning
+from . import coregistration

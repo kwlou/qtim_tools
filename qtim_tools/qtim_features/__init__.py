@@ -1,6 +1,6 @@
-from extract_features import *
+from .extract_features import *
 # from test import *
-import GLCM
-import morphology
-import statistics
-import phantoms
+from . import GLCM
+from . import morphology
+from . import statistics
+from . import phantoms

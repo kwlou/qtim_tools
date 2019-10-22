@@ -3,7 +3,7 @@
     these will need to be tested against ground-truth soon.
 """
 
-from __future__ import division
+
 
 import numpy as np
 
@@ -58,9 +58,9 @@ def convolve_3d(image, kernel, skip_zero=True, **kwargs):
     convolve_image = np.zeros_like(image)
     padded_image = np.lib.pad(image, (1, ), 'constant')
 
-    for x in xrange(image.shape[0], **kwargs):
-        for y in xrange(image.shape[1], **kwargs):
-            for z in xrange(image.shape[2], **kwargs):
+    for x in range(image.shape[0], **kwargs):
+        for y in range(image.shape[1], **kwargs):
+            for z in range(image.shape[2], **kwargs):
 
                 if image[x, y, z] == 0 and skip_zero:
                     pass
@@ -159,7 +159,7 @@ def calc_max_2d_distance(image, pixdims, **kwargs):
 
     total_max = 0
 
-    for z_slice in xrange(image.shape[2]):
+    for z_slice in range(image.shape[2]):
 
         image_slice = image[..., z_slice]
 
@@ -224,7 +224,7 @@ def calc_max_3d_distance(image, pixdims, **kwargs):
 
     convex_hull_vertices = []
 
-    for z_slice in xrange(image.shape[2]):
+    for z_slice in range(image.shape[2]):
 
         slice_indices = np.asarray(np.where(image[..., z_slice])).T  # Won't work for non-binary labels.
         
@@ -260,12 +260,12 @@ _default_features = {'voxel_count': calc_voxel_count,
                         'sphericity': calc_sphericity,
                         '2d_max_distance': calc_max_2d_distance,
                         '3d_max_distance': calc_max_3d_distance}
-_default_feature_names = _default_features.keys()
+_default_feature_names = list(_default_features.keys())
 
 
 def morphology_features(image, attributes, features=['voxel_count', 'volume', 'surface_area', 'volume_surface_area_ratio', 'compactness', 'compactness_alternate', 'spherical_disproportion', 'sphericity', '2d_max_distance', '3d_max_distance'], mask_value=0, **kwargs):
 
-    if isinstance(features, basestring, **kwargs):
+    if isinstance(features, str, **kwargs):
         features = [features, ]
 
     results = np.zeros(len(features), dtype=float)
@@ -288,6 +288,6 @@ def featurename_strings(features=['voxel_count', 'volume', 'surface_area', 'volu
 
 
 def feature_count(features=['voxel_count', 'volume', 'surface_area', 'volume_surface_area_ratio', 'compactness', 'compactness_alternate', 'spherical_disproportion', 'sphericity', '2d_max_distance', '3d_max_distance'], **kwargs):
-    if isinstance(features, basestring, **kwargs):
+    if isinstance(features, str, **kwargs):
         features = [features, ]
     return len(features)

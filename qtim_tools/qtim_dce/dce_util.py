@@ -1,7 +1,7 @@
 """ Reusable utility functions associated with DCE analysis. TODO
     clean up this file.
 """
-from __future__ import division
+
 
 from qtim_tools.qtim_utilities.nifti_util import save_numpy_2_nifti
 from multiprocessing import freeze_support
@@ -85,7 +85,7 @@ def convert_intensity_to_concentration(data_numpy, T1_tissue, TR, flip_angle_deg
         baseline = np.mean(data_numpy[...,0:int(np.round(injection_start_time_seconds/time_interval_seconds))], axis=dim-1)
         baseline = np.tile(np.reshape(baseline, (baseline.shape[0:dim-1] + (1,))), (1,)*(dim-1) + (data_numpy.shape[-1],))
     else:
-        print 'Dimension error. Please enter an array with dimensions between 1 and 4.'
+        print('Dimension error. Please enter an array with dimensions between 1 and 4.')
 
     output_numpy = np.copy(data_numpy)
 
@@ -136,7 +136,7 @@ def estimate_concentration_general(params, contrast_AIF_numpy, time_interval_min
     block_B = (capital_E - (capital_E * log_e) - 1)
     block_ktrans = ktrans * time_interval_minutes / log_e_2
 
-    for i in xrange(1, len(contrast_AIF_numpy)):
+    for i in range(1, len(contrast_AIF_numpy)):
         term_A = contrast_AIF_numpy[i] * block_A
         term_B = contrast_AIF_numpy[i-1] * block_B
         estimated_concentration[..., i] = estimated_concentration[..., i-1]*capital_E + block_ktrans * (term_A - term_B)
@@ -165,7 +165,7 @@ def estimate_concentration(params, contrast_AIF_numpy, time_interval_minutes):
     block_B = (capital_E - (capital_E * log_e) - 1)
     block_ktrans = ktrans * time_interval_minutes / log_e_2
 
-    for i in xrange(1, np.size(contrast_AIF_numpy)):
+    for i in range(1, np.size(contrast_AIF_numpy)):
         term_A = contrast_AIF_numpy[i] * block_A
         term_B = contrast_AIF_numpy[i-1] * block_B
         append(estimated_concentration[-1]*capital_E + block_ktrans * (term_A - term_B))
@@ -255,13 +255,13 @@ def generate_AIF(scan_time_seconds, injection_start_time_seconds, time_interval_
                     AIF = masked_AIF_subregion.mean(axis=0, dtype=np.float64)
                     return AIF
                 else:
-                    print 'Error: too many or too few dimensions to calculate AIF currently. Unable to calculate AIF.'
+                    print('Error: too many or too few dimensions to calculate AIF currently. Unable to calculate AIF.')
                     return []
             else:
                 'Error: no AIF label detected. Unable to calculate AIF.'
                 return []
         else:
-            print 'No image provided to AIF function. Set AIF_mode to \'population\' to use a population AIF. Unable to calculate AIF.'
+            print('No image provided to AIF function. Set AIF_mode to \'population\' to use a population AIF. Unable to calculate AIF.')
             return []
 
     if AIF_mode == 'population':
@@ -281,7 +281,7 @@ def create_gradient_phantom(output_prefix, output_shape=(20,20), ktrans_range=[.
     timepoints = int(scan_time_seconds/time_interval_seconds)
     time_series_minutes = np.arange(0, timepoints) / (60 / time_interval_seconds)
     time_interval_minutes = time_interval_seconds / 60
-    print time_interval_minutes
+    print(time_interval_minutes)
 
     # Create empty phantom, labels, and outputs
     output_phantom_concentration = np.zeros(output_shape + (2, int(scan_time_seconds/time_interval_seconds)), dtype=float)
@@ -306,8 +306,8 @@ def create_gradient_phantom(output_prefix, output_shape=(20,20), ktrans_range=[.
             output_ve[ve_idx, ktrans_idx, 0] = float(ve)
 
             # print np.squeeze(AIF).shape
-            print ve_idx, ktrans_idx
-            print ktrans, ve
+            print(ve_idx, ktrans_idx)
+            print(ktrans, ve)
             # conc = estimate_concentration([ktrans,ve], np.squeeze(AIF)[:], time_series_minutes)
             # print len(conc)
             # print conc[-1]

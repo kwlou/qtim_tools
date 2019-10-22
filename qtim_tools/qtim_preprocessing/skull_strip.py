@@ -38,7 +38,7 @@ def skull_strip(input_data, output_filename='', output_mask_filename='', method=
 
     skull_strip_methods = ['bet']
     if method not in skull_strip_methods:
-        print 'Input \"method\" parameter is not available. Available methods: ', skull_strip_methods
+        print('Input \"method\" parameter is not available. Available methods: ', skull_strip_methods)
         return
 
     if method == 'bet':
@@ -47,7 +47,7 @@ def skull_strip(input_data, output_filename='', output_mask_filename='', method=
 
         temp_input, temp_output, temp_mask_output = False, False, False
 
-        if not isinstance(input_data, basestring):
+        if not isinstance(input_data, str):
             input_filename = os.path.join(temp_dir, 'temp.nii.gz')
             save_numpy_2_nifti(input_data, input_filename)
             temp_input = True
@@ -65,7 +65,7 @@ def skull_strip(input_data, output_filename='', output_mask_filename='', method=
         # if extra_parameters['fsl_threshold'] is None:
         extra_parameters['fsl_threshold'] = .5
 
-        print ' '.join([command, input_filename, output_filename, '-f', str(extra_parameters['fsl_threshold']), '-g', '0', '-m'])
+        print(' '.join([command, input_filename, output_filename, '-f', str(extra_parameters['fsl_threshold']), '-g', '0', '-m']))
         subprocess.call([command, input_filename, output_filename, '-f', str(extra_parameters['fsl_threshold']), '-g', '0', '-m'])
 
         if output_mask_filename != '':

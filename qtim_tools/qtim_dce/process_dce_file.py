@@ -1,5 +1,5 @@
 import argparse
-import ConfigParser as configparser
+import configparser as configparser
 
 import tofts_parameter_calculator
 

@@ -1,4 +1,4 @@
-from __future__ import division
+
 
 import numpy as np
 import nibabel as nib
@@ -24,7 +24,7 @@ def return_nifti_attributes(filepath):
 
 def get_nifti_affine(input_data):
 
-    if isinstance(input_data, basestring):
+    if isinstance(input_data, str):
         affine = nib.load(input_data).affine
     else:
         affine = input_data.affine
@@ -48,7 +48,7 @@ def set_nifti_affine(input_data, new_affine, output_filepath=None):
 
     """
 
-    if isinstance(input_data, basestring):
+    if isinstance(input_data, str):
         if output_filepath is None:
             output_filepath = input_data
         input_data = nib.load(input_data)
@@ -127,13 +127,13 @@ def save_numpy_2_nifti(image_numpy, reference_nifti_filepath=None, output_filepa
     """
 
     if reference_nifti_filepath is not None:
-        if isinstance(reference_nifti_filepath, basestring):
+        if isinstance(reference_nifti_filepath, str):
             nifti_image = nib.load(reference_nifti_filepath)
             image_affine = nifti_image.affine
         else:
             image_affine = reference_nifti_filepath
     else:
-        print 'Warning: no reference nifti file provided. Generating empty header.'
+        print('Warning: no reference nifti file provided. Generating empty header.')
         image_affine = np.eye(4)
 
     output_nifti = nib.Nifti1Image(image_numpy, image_affine)
@@ -173,9 +173,9 @@ def coerce_levels(image_numpy, levels=255, method="divide", reference_image=None
             image_max = np.max(image_numpy)
         else:
             image_max = np.max(reference_image)
-        for x in xrange(image_numpy.shape[0]):
-            for y in xrange(image_numpy.shape[1]):
-                for z in xrange(image_numpy.shape[2]):
+        for x in range(image_numpy.shape[0]):
+            for y in range(image_numpy.shape[1]):
+                for z in range(image_numpy.shape[2]):
                     if image_numpy[x,y,z] != mask_value:
                         image_numpy[x,y,z] = np.round((image_numpy[x,y,z] / image_max) * levels) + 1
 
@@ -235,9 +235,9 @@ def coerce_levels(image_numpy, levels=255, method="divide", reference_image=None
             image_range = [np.min(z_reference_image), np.max(z_reference_image)]
             bins = np.linspace(image_range[0], image_range[1], levels)
 
-        for x in xrange(image_numpy.shape[0]):
-            for y in xrange(image_numpy.shape[1]):
-                for z in xrange(image_numpy.shape[2]):
+        for x in range(image_numpy.shape[0]):
+            for y in range(image_numpy.shape[1]):
+                for z in range(image_numpy.shape[2]):
                     if image_numpy[x,y,z] != mask_value:
                         image_numpy[x,y,z] = (np.abs(bins-z_image_numpy[x,y,z])).argmin() + 1
 
@@ -270,11 +270,11 @@ def erode_label(image_numpy, iterations=2, mask_value=0):
 
     if isinstance(iterations, list):
         if len(iterations) != 3:
-            print 'The erosion parameter does not have enough dimensions (3). Using the first value in the eroison parameter.'
+            print('The erosion parameter does not have enough dimensions (3). Using the first value in the eroison parameter.')
     else:
         iterations == [iterations, iterations, iterations]
 
-    for i in xrange(max(iterations)):
+    for i in range(max(iterations)):
 
         kernel_center = 0
         edges_kernel = np.zeros((3,3,3),dtype=float)
@@ -319,7 +319,7 @@ def check_image_2d(image_numpy, second_image_numpy=[], slice_view="cycle", step=
     """
 
     if second_image_numpy != []:
-        for i in xrange(image_numpy.shape[0]):
+        for i in range(image_numpy.shape[0]):
             fig = plt.figure()
             a=fig.add_subplot(1,2,1)
             imgplot = plt.imshow(image_numpy[:,:,i*step], interpolation='none', aspect='auto')
@@ -328,7 +328,7 @@ def check_image_2d(image_numpy, second_image_numpy=[], slice_view="cycle", step=
             plt.show()
     else:
         if slice_view == "cycle":
-            for i in xrange(image_numpy.shape[0]):
+            for i in range(image_numpy.shape[0]):
                 fig = plt.figure()
                 imgplot = plt.imshow(image_numpy[i,:,:], interpolation='none', aspect='auto')
                 plt.show()
@@ -342,7 +342,7 @@ def check_image_2d(image_numpy, second_image_numpy=[], slice_view="cycle", step=
 
             maximal = [0, np.zeros(image_numpy.shape)]
 
-            for i in xrange(image_numpy.shape[2]):
+            for i in range(image_numpy.shape[2]):
             
                 image_slice = image_numpy[:,:,i]
 
@@ -447,10 +447,10 @@ def fill_in_convex_outline(filepath, output_file, outline_lower_threshold=[], ou
         label_file = np.zeros_like(image_file)
         # print image_file.shape
 
-        for row in xrange(image_file.shape[0]):
+        for row in range(image_file.shape[0]):
             row_section = 0
             fill_index = 0
-            for col in xrange(image_file.shape[1]):
+            for col in range(image_file.shape[1]):
                 match = False
                 pixel = image_file[row, col, ...]
                 
@@ -461,7 +461,7 @@ def fill_in_convex_outline(filepath, output_file, outline_lower_threshold=[], ou
                     if (pixel == outline_color):
                         match = True
                 else:
-                    print 'Error. Please provide a valid outline color or threshold.'
+                    print('Error. Please provide a valid outline color or threshold.')
                     return
 
                 if match:

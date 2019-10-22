@@ -3,7 +3,7 @@
     add needless complexitly down the road.
 """
 
-from __future__ import division
+
 
 import numpy as np
 from scipy import stats
@@ -108,7 +108,7 @@ def qtim_statistic(input_data, statistics, label_data='', mask_value=0, return_l
     """
 
     outputs = []
-    if isinstance(statistics, basestring):
+    if isinstance(statistics, str):
         statistics = [statistics,]
 
     input_numpy = convert_input_2_numpy(input_data)
@@ -121,7 +121,7 @@ def qtim_statistic(input_data, statistics, label_data='', mask_value=0, return_l
     for statistic in statistics:
 
         if statistics_dict[statistic] == []:
-            print 'No statistics by that keyword. Returning blank...'
+            print('No statistics by that keyword. Returning blank...')
             outputs += ['']
 
         try:
@@ -133,7 +133,7 @@ def qtim_statistic(input_data, statistics, label_data='', mask_value=0, return_l
 
 def statistics_features(image, features=standard_features, label_file='', mask_value=0):
 
-    if isinstance(features, basestring):
+    if isinstance(features, str):
         features = [features,]
 
     results = np.zeros(len(features), dtype=float)
@@ -180,6 +180,6 @@ def featurename_strings(features=standard_features):
     return features
 
 def feature_count(features=standard_features):
-    if isinstance(features, basestring):
+    if isinstance(features, str):
         features = [features,]
     return len(features)

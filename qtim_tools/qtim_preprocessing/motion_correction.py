@@ -31,7 +31,7 @@ def motion_correction(input_data, output_filename='', method="fsl", command="fsl
 
     motion_correction_methods = ['fsl']
     if method not in motion_correction_methods:
-        print 'Input \"method\" parameter is not available. Available methods: ', motion_correction_methods
+        print('Input \"method\" parameter is not available. Available methods: ', motion_correction_methods)
         return
 
     if method == 'fsl':
@@ -40,7 +40,7 @@ def motion_correction(input_data, output_filename='', method="fsl", command="fsl
 
         temp_input, temp_output = False, False
 
-        if not isinstance(input_data, basestring):
+        if not isinstance(input_data, str):
             input_filename = os.path.join(temp_dir, 'temp.nii.gz')
             save_numpy_2_nifti(input_data, input_filename)
             temp_input = True
@@ -51,7 +51,7 @@ def motion_correction(input_data, output_filename='', method="fsl", command="fsl
             temp_output = True
             output_filename = os.path.join(temp_dir, 'temp_out.nii.gz')
 
-        print ' '.join([command, input_filename, output_filename, '0'])
+        print(' '.join([command, input_filename, output_filename, '0']))
         subprocess.call([command, input_filename, output_filename, '0'])
 
         if temp_input:

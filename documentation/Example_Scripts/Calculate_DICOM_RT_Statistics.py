@@ -52,7 +52,7 @@ def Compare_Segmentations(InputSeg, InputGroundTruth, InputVolume, OutputFolder,
         cm_in_voxels = int(np.floor(10/reference_axial_dim))
         axial_limits = [-1, -1]
         # There is likely a more effecient and clear way to find these bounds.
-        for z in xrange(reference_esophagus_numpy.shape[2]):
+        for z in range(reference_esophagus_numpy.shape[2]):
             if np.sum(reference_esophagus_numpy[:,:,z]) > 0:
                 if axial_limits[0] == -1:
                     if z+cm_in_voxels > reference_esophagus_numpy.shape[2]:
@@ -68,10 +68,10 @@ def Compare_Segmentations(InputSeg, InputGroundTruth, InputVolume, OutputFolder,
             crop_numpy[:,:,int(axial_limits[1]+1):] = 0
             nib.save(nib.Nifti1Image(crop_numpy, crop_nifti.affine), crop_segmentation)
     else:
-        print 'WARNING: No esophagus file found in the ground truth DICOM-RT. No truncation of the spinal cord to match the esophagus will occur.'
+        print('WARNING: No esophagus file found in the ground truth DICOM-RT. No truncation of the spinal cord to match the esophagus will occur.')
 
     # Create Output CSV
-    output_array = np.zeros((2, len(Labels.keys())*3+1), dtype=object)
+    output_array = np.zeros((2, len(list(Labels.keys()))*3+1), dtype=object)
     output_array[0,0] = 'Segmentation Name'
     output_array[1,0] = InputSeg_Base
 
@@ -81,14 +81,14 @@ def Compare_Segmentations(InputSeg, InputGroundTruth, InputVolume, OutputFolder,
 
         Label_Name = str.split(os.path.basename(os.path.normpath(Segmentation_Label)), '.')[0]
 
-        if Label_Name in Labels.keys():
+        if Label_Name in list(Labels.keys()):
 
             Docker_Command = 'docker run --rm -v ' + mount_path + ':/input_dicom mayoqin/plastimatch plastimatch dice --all ./input_dicom/' + str.split(InputGroundTruth_Base, '.')[0] + '_split/' + Label_Name + '.nii.gz ./input_dicom/' + str.split(InputSeg_Base, '.')[0] + '_split/' + Label_Name + '.nii.gz'
             output = subprocess.check_output(Docker_Command, shell=True)
             output = str.split(output, '\n')
             output = [x.replace(' ', '') for x in output]
 
-            print output
+            print(output)
 
             DICE = str.split(output[7], ':')[1]
             HAUSDORFF = str.split(output[-2], '=')[1]
@@ -102,8 +102,8 @@ def Compare_Segmentations(InputSeg, InputGroundTruth, InputVolume, OutputFolder,
             output_array[1,output_index + 2] = AVERAGE_DISTANCE
             output_index += 3
 
-            print os.path.basename(os.path.join(mount_path, str.split(InputSeg_Base, '.')[0] + '_split', Label_Name + '.nii.gz'))
-            print DICE, ' ', HAUSDORFF, ' ', AVERAGE_DISTANCE
+            print(os.path.basename(os.path.join(mount_path, str.split(InputSeg_Base, '.')[0] + '_split', Label_Name + '.nii.gz')))
+            print(DICE, ' ', HAUSDORFF, ' ', AVERAGE_DISTANCE)
 
             Labels.pop(Label_Name)
 
