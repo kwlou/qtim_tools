@@ -24,6 +24,6 @@ def save_alternate_nifti(filepath, levels, reference_image=[], method="z_score",
 
     print('new_image_created!')
 
-    print('zmapped_' + str.split(filepath, '//')[-1])
+    print(('zmapped_' + str.split(filepath, '//')[-1]))
 
     nib.save(new_img, 'zmapped_' + str.split(filepath, '//')[-1])

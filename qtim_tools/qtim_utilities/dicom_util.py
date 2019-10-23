@@ -95,7 +95,7 @@ def dcm_2_numpy(input_folder, verbose=False):
     found_files = grab_files_recursive(input_folder)
 
     if verbose:
-        print('Found', len(found_files), 'in directory. \n')
+        print(('Found', len(found_files), 'in directory. \n'))
         print('Checking DICOM compatability...')
 
     dicom_files = []
@@ -107,7 +107,7 @@ def dcm_2_numpy(input_folder, verbose=False):
             continue
 
     if verbose:
-        print('Found', len(dicom_files), 'DICOM files in directory. \n')
+        print(('Found', len(dicom_files), 'DICOM files in directory. \n'))
         print('Counting volumes..')
 
     unique_dicoms = defaultdict(list)
@@ -116,7 +116,7 @@ def dcm_2_numpy(input_folder, verbose=False):
         unique_dicoms[UID] += [dicom_file[0]]
 
     if verbose:
-        print('Found', len(list(unique_dicoms.keys())), 'unique volumes \n')
+        print(('Found', len(list(unique_dicoms.keys())), 'unique volumes \n'))
         print('Saving out files from these volumes.')
 
     output_dict = {}
@@ -135,18 +135,18 @@ def dcm_2_numpy(input_folder, verbose=False):
             current_files = [x for _, x in sorted(zip(dicom_instances, current_files))]
             first_dicom, last_dicom = current_dicoms[0], current_dicoms[-1]
 
-            print(first_dicom.file_meta)
-            print(first_dicom.file_meta.TransferSyntaxUID)
+            print((first_dicom.file_meta))
+            print((first_dicom.file_meta.TransferSyntaxUID))
 
             # Create a filename for the DICOM
             volume_label = '_'.join([first_dicom.data_element(tag).value for tag in naming_tags]).replace(" ", "")
             volume_label = prefix + sanitize_filename(volume_label) + suffix + '.nii.gz'
 
             if verbose:
-                print('Saving...', volume_label)
+                print(('Saving...', volume_label))
 
         except:
-            print('Could not read DICOM volume SeriesDescription. Skipping UID...', str(UID))
+            print(('Could not read DICOM volume SeriesDescription. Skipping UID...', str(UID)))
             continue
 
         try:
@@ -177,7 +177,7 @@ def dcm_2_numpy(input_folder, verbose=False):
                 try:
                     output_numpy += [get_dicom_pixel_array(current_dicoms[i], current_files[i])]
                 except:
-                    print('Warning, error at slice', i)
+                    print(('Warning, error at slice', i))
             output_numpy = np.stack(output_numpy, -1)
 
             # If preferred, harden to identity matrix space (LPS, maybe?)
@@ -220,7 +220,7 @@ def dcm_2_numpy(input_folder, verbose=False):
             output_filenames += [output_filename]
 
         except:
-            print('Could not read DICOM at SeriesDescription...', volume_label)
+            print(('Could not read DICOM at SeriesDescription...', volume_label))
 
     return output_filenames
 
@@ -239,7 +239,7 @@ def dcm_2_nifti(input_folder, output_folder, verbose=True, naming_tags=['SeriesD
     found_files = grab_files_recursive(input_folder)
 
     if verbose:
-        print('Found', len(found_files), 'in directory. \n')
+        print(('Found', len(found_files), 'in directory. \n'))
         print('Checking DICOM compatability...')
 
     dicom_files = []
@@ -251,7 +251,7 @@ def dcm_2_nifti(input_folder, output_folder, verbose=True, naming_tags=['SeriesD
             continue
 
     if verbose:
-        print('Found', len(dicom_files), 'DICOM files in directory. \n')
+        print(('Found', len(dicom_files), 'DICOM files in directory. \n'))
         print('Counting volumes..')
 
     dicom_headers = [] 
@@ -261,7 +261,7 @@ def dcm_2_nifti(input_folder, output_folder, verbose=True, naming_tags=['SeriesD
         unique_dicoms[UID] += [dicom_file[0]]
 
     if verbose:
-        print('Found', len(list(unique_dicoms.keys())), 'unique volumes \n')
+        print(('Found', len(list(unique_dicoms.keys())), 'unique volumes \n'))
         print('Saving out files from these volumes.')
 
     output_dict = {}
@@ -280,18 +280,18 @@ def dcm_2_nifti(input_folder, output_folder, verbose=True, naming_tags=['SeriesD
             current_files = [x for _,x in sorted(zip(dicom_instances,current_files))]
             first_dicom, last_dicom = current_dicoms[0], current_dicoms[-1]
 
-            print(first_dicom.file_meta)
-            print(first_dicom.file_meta.TransferSyntaxUID)
+            print((first_dicom.file_meta))
+            print((first_dicom.file_meta.TransferSyntaxUID))
 
             # Create a filename for the DICOM
             volume_label = '_'.join([first_dicom.data_element(tag).value for tag in naming_tags]).replace(" ", "")
             volume_label = prefix + sanitize_filename(volume_label) + suffix + '.nii.gz'
 
             if verbose:
-                print('Saving...', volume_label)
+                print(('Saving...', volume_label))
 
         except:
-            print('Could not read DICOM volume SeriesDescription. Skipping UID...', str(UID))
+            print(('Could not read DICOM volume SeriesDescription. Skipping UID...', str(UID)))
             continue
 
         try:
@@ -322,7 +322,7 @@ def dcm_2_nifti(input_folder, output_folder, verbose=True, naming_tags=['SeriesD
                 try:
                     output_numpy += [get_dicom_pixel_array(current_dicoms[i], current_files[i])]
                 except:
-                    print('Warning, error at slice', i)
+                    print(('Warning, error at slice', i))
             output_numpy = np.stack(output_numpy, -1)
 
             # If preferred, harden to identity matrix space (LPS, maybe?)
@@ -365,7 +365,7 @@ def dcm_2_nifti(input_folder, output_folder, verbose=True, naming_tags=['SeriesD
             output_filenames += [output_filename]
 
         except:
-            print('Could not read DICOM at SeriesDescription...', volume_label)
+            print(('Could not read DICOM at SeriesDescription...', volume_label))
 
     return output_filenames
 

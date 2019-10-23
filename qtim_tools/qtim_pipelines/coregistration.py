@@ -127,14 +127,14 @@ def coregister_pipeline(study_name, base_directory, destination_volume='T2', out
             if not os.path.exists(dir_check):
                 os.makedirs(dir_check)
 
-        print('patient_visit', patient_visit)
+        print(('patient_visit', patient_visit))
 
         file_deletion_list = []
         for name_change_directory in name_change_dict:
             for name_change_file in name_change_dict[name_change_directory]:
 
                 print(name_change_file)
-                print(os.path.join(base_directory, study_name, 'ANALYSIS', name_change_directory, patient_visit[0], patient_visit[1], '*' + name_change_file + '*'))
+                print((os.path.join(base_directory, study_name, 'ANALYSIS', name_change_directory, patient_visit[0], patient_visit[1], '*' + name_change_file + '*')))
 
                 name_change_volume = glob.glob(os.path.join(base_directory, study_name, 'ANALYSIS', name_change_directory, patient_visit[0], patient_visit[1], '*' + name_change_file + '*'))
 
@@ -173,28 +173,28 @@ def coregister_pipeline(study_name, base_directory, destination_volume='T2', out
 
                 print('\n')
 
-                print('fixed_step', fixed_step)
+                print(('fixed_step', fixed_step))
 
-                print(os.path.join(base_directory, study_name, 'ANALYSIS', input_modality_dict[fixed_step][0], patient_visit[0], patient_visit[1], '*' + input_modality_dict[fixed_step][1][0] + '*'))
+                print((os.path.join(base_directory, study_name, 'ANALYSIS', input_modality_dict[fixed_step][0], patient_visit[0], patient_visit[1], '*' + input_modality_dict[fixed_step][1][0] + '*')))
 
                 # Find the fixed volume
                 fixed_volume = glob.glob(os.path.join(base_directory, study_name, 'ANALYSIS', input_modality_dict[fixed_step][0], patient_visit[0], patient_visit[1], '*' + input_modality_dict[fixed_step][1][0] + '*'))
                 # Error check the fixed volume
                 if fixed_volume == []:
-                    print('Missing', input_modality_dict[fixed_step][1][0], 'in registration pathway', registration_pathway, '. Skipping this step.')
+                    print(('Missing', input_modality_dict[fixed_step][1][0], 'in registration pathway', registration_pathway, '. Skipping this step.'))
                     continue
                 fixed_volume = fixed_volume[0]
 
-                print('fixed_volume', fixed_volume)
+                print(('fixed_volume', fixed_volume))
 
                 # Get available files to register. Reformat so this is less redundant.
                 moving_volume = glob.glob(os.path.join(base_directory, study_name, 'ANALYSIS', input_modality_dict[moving_step][0], patient_visit[0], patient_visit[1], '*' + input_modality_dict[moving_step][1][0] + '*'))
                 if moving_volume == []:
-                    print('Missing', input_modality_dict[moving_step][1][0], 'in registration pathway', registration_pathway, '. Skipping this step.')
+                    print(('Missing', input_modality_dict[moving_step][1][0], 'in registration pathway', registration_pathway, '. Skipping this step.'))
                     continue        
                 moving_volume = moving_volume[0]
 
-                print('leader_moving_volume', moving_volume)
+                print(('leader_moving_volume', moving_volume))
 
                 if moving_step in difficult_registration_files:
                     sampling_percentage = 0.2
@@ -223,19 +223,19 @@ def coregister_pipeline(study_name, base_directory, destination_volume='T2', out
 
                 final_transform = generate_identity_affine()
                 for concat_transform in transform_list:
-                    print(itk_transform_2_numpy(concat_transform))
-                    print(itk_2_vtk_transform(itk_transform_2_numpy(concat_transform)))                    
+                    print((itk_transform_2_numpy(concat_transform)))
+                    print((itk_2_vtk_transform(itk_transform_2_numpy(concat_transform))))                    
                     final_transform = compose_affines(final_transform, itk_2_vtk_transform(itk_transform_2_numpy(concat_transform)))
 
                 combined_transforms = []
 
-                print('transform_list', transform_list)
+                print(('transform_list', transform_list))
 
                 # Find the fixed volume
                 reference_volume = glob.glob(os.path.join(base_directory, study_name, 'ANALYSIS', input_modality_dict[registration_pathway[-1]][0], patient_visit[0], patient_visit[1], '*' + input_modality_dict[registration_pathway[-1]][1][0] + '*'))
                 # Error check the fixed volume
                 if reference_volume == []:
-                    print('Missing ', input_modality_dict[registration_pathway[-1]][1][0], 'in registration pathway', registration_pathway, '. Skipping this step.')
+                    print(('Missing ', input_modality_dict[registration_pathway[-1]][1][0], 'in registration pathway', registration_pathway, '. Skipping this step.'))
                     continue
                 reference_volume = reference_volume[0]
 
@@ -252,13 +252,13 @@ def coregister_pipeline(study_name, base_directory, destination_volume='T2', out
 
                     moving_volume_filename = glob.glob(os.path.join(base_directory, study_name, 'ANALYSIS', input_modality_dict[moving_step][0], patient_visit[0], patient_visit[1], '*' + moving_volume + '*'))
                     if moving_volume_filename == []:
-                        print('Missing ', moving_volume, 'in registration pathway', registration_pathway, '. Skipping this step.')
+                        print(('Missing ', moving_volume, 'in registration pathway', registration_pathway, '. Skipping this step.'))
                         continue        
                     moving_volume_filename = moving_volume_filename[0]
 
-                    print(itk_transform_2_numpy(transform_list[0]))
-                    print(get_nifti_affine(moving_volume_filename))
-                    print(compose_affines(itk_transform_2_numpy(transform_list[0]), get_nifti_affine(moving_volume_filename)))
+                    print((itk_transform_2_numpy(transform_list[0])))
+                    print((get_nifti_affine(moving_volume_filename)))
+                    print((compose_affines(itk_transform_2_numpy(transform_list[0]), get_nifti_affine(moving_volume_filename))))
 
                     moving_suffix, fixed_suffix = get_file_suffixes(moving_volume_filename, reference_volume, visit_code)
                     input_transform = os.path.join(output_folder_transform, visit_code + moving_suffix + '_r_' + fixed_suffix +'.txt')

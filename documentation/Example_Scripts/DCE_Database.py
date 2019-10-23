@@ -165,8 +165,8 @@ def Convert_NordicIce_AIF(AIF_directory, output_suffix='_AIF'):
     AIF_numpy_list = [[np.loadtxt(AIF, dtype=float), AIF] for AIF in AIF_list]
 
     for AIF in AIF_numpy_list:
-        print(AIF[1])
-        print(AIF[0].shape)
+        print((AIF[1]))
+        print((AIF[0].shape))
 
         np.savetxt(replace_suffix(AIF[1], '', output_suffix), AIF[0][None], fmt='%2.5f', delimiter=';')
 
@@ -183,17 +183,17 @@ def Create_Study_AIF(AIF_directory, output_AIF):
     AIF_array = np.zeros((len(AIF_numpy_list), 60), dtype=object)
 
     for row_idx, row in enumerate(AIF_array):
-        print(len(AIF_numpy_list[row_idx][0]))
-        print(AIF_numpy_list[row_idx][1])
-        print(AIF_numpy_list[row_idx][0])
+        print((len(AIF_numpy_list[row_idx][0])))
+        print((AIF_numpy_list[row_idx][1]))
+        print((AIF_numpy_list[row_idx][0]))
         AIF_array[row_idx, :] = AIF_numpy_list[row_idx][0][0:60]
 
     np.set_printoptions(suppress=True)
 
     AIF_array = AIF_array.astype(float)
-    print(AIF_array.shape)
-    print(np.mean(AIF_array, axis=0))
-    print(np.mean(AIF_array, axis=0).T.shape)
+    print((AIF_array.shape))
+    print((np.mean(AIF_array, axis=0)))
+    print((np.mean(AIF_array, axis=0).T.shape))
 
     np.savetxt(output_AIF, np.mean(AIF_array, axis=0)[None], fmt='%2.5f', delimiter=';')
 
@@ -257,7 +257,7 @@ def Store_and_Retrieve(data_directory, storage_directory):
     for file in file_database:
 
         if 'blur_0.8' in file or 'lm' in file or 'conv' in file:
-            print(os.path.basename(file))
+            print((os.path.basename(file)))
             move(file, os.path.join(storage_directory, os.path.basename(file)))
 
     # Retrieve
@@ -266,7 +266,7 @@ def Store_and_Retrieve(data_directory, storage_directory):
     for file in file_database:
 
         if 'pca_0' in file and ('blur_0.2' in file or 'blur_0_' in file) and ('simplex' in file and 'recursive' in file) and ('threshold_-1' in file or 'threshold_none' in file):
-            print(os.path.basename(file))
+            print((os.path.basename(file)))
             move(file, os.path.join(data_directory, os.path.basename(file)))
 
 def Determine_R2_Cutoff_Point(input_directory, ROI_directory):
@@ -307,13 +307,13 @@ def Determine_R2_Cutoff_Point(input_directory, ROI_directory):
             r2_masked_num[r2_idx] += ((r2_array <= r2_threshold) & (roi_array > 0)).sum()
             r2_total_num[r2_idx] += (roi_array > 0).sum()
 
-        print(np.array(r2_masked_num, dtype=float) / np.array(r2_total_num, dtype=float))
+        print((np.array(r2_masked_num, dtype=float) / np.array(r2_total_num, dtype=float)))
 
     r2_percent_num = np.array(r2_masked_num, dtype=float) / np.array(r2_total_num, dtype=float)
 
     for r2_idx, r2_threshold in enumerate(range(0,1,.01)):
         print(r2_threshold)
-        print(r2_percent_num[r2_idx])
+        print((r2_percent_num[r2_idx]))
 
     return
 
@@ -330,7 +330,7 @@ def Preprocess_Volumes(input_directory, output_directory, r2_threshold=.9):
         os.mkdir(output_directory)
 
     file_database = glob.glob(os.path.join(input_directory, '*r2*.nii*'))
-    print(os.path.join(input_directory, '*r2*.nii*'))
+    print((os.path.join(input_directory, '*r2*.nii*')))
 
     for file in file_database:
 
@@ -350,7 +350,7 @@ def Preprocess_Volumes(input_directory, output_directory, r2_threshold=.9):
         ktrans_map = convert_input_2_numpy(input_ktrans)
         ve_map = convert_input_2_numpy(input_ve)
 
-        print((r2_map < r2_threshold).sum())
+        print(((r2_map < r2_threshold).sum()))
 
         ve_map[ktrans_map > 10] = 0
         ktrans_map[ktrans_map > 10] = 0
@@ -458,7 +458,7 @@ def Paired_Visits_Worksheet(input_csv, output_csv, grab_column=2, r2_thresholds=
 
                 if new_visit in input_data[:,0]:
                     
-                    print(np.where(input_data == visit)[0][0])
+                    print((np.where(input_data == visit)[0][0]))
 
                     output_data[visit_idx+1, 0] = visit
                     output_data[visit_idx+1, 1] = input_data[np.where(input_data == visit)[0][0], grab_column]
@@ -497,7 +497,7 @@ def Coeffecient_of_Variation_Worksheet(input_csv, output_csv, r2_thresholds=[.9]
                 method_dict[method].add(str.split(row[0], '/')[-1][0:15])
 
         available_patients = []
-        for key, value in method_dict.items():
+        for key, value in list(method_dict.items()):
             print(key)
             if len(value) < 5:
                 continue
@@ -507,7 +507,7 @@ def Coeffecient_of_Variation_Worksheet(input_csv, output_csv, r2_thresholds=[.9]
                 available_patients = value
 
         print(available_patients)
-        print(len(available_patients))
+        print((len(available_patients)))
         
         new_input_data = np.zeros((1,3), dtype=object)
         for row_idx, row in enumerate(input_data):

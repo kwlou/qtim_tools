@@ -306,8 +306,8 @@ def create_gradient_phantom(output_prefix, output_shape=(20,20), ktrans_range=[.
             output_ve[ve_idx, ktrans_idx, 0] = float(ve)
 
             # print np.squeeze(AIF).shape
-            print(ve_idx, ktrans_idx)
-            print(ktrans, ve)
+            print((ve_idx, ktrans_idx))
+            print((ktrans, ve))
             # conc = estimate_concentration([ktrans,ve], np.squeeze(AIF)[:], time_series_minutes)
             # print len(conc)
             # print conc[-1]

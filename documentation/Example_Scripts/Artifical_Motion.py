@@ -101,7 +101,7 @@ def Create_Ideal_DCE(input_folder, output_filepath = '', input_aif=''):
 
     for input_4d_nifti in input_DCEs:
 
-        print('Regenerating... ', input_4d_nifti)
+        print(('Regenerating... ', input_4d_nifti))
 
         # if output_filepath == '':
         output_filepath = str.split(input_4d_nifti, '.')[0]
@@ -171,14 +171,14 @@ def Add_White_Noise(input_folder, noise_scale=1, noise_multiplier=10):
 def Add_Head_Jerks(input_folder, random_rotations=5, random_duration_range=[4,9], random_rotation_peaks=[[-4,4],[-4,4],[-4,4]], durations=7, timepoints=7, rotation_peaks=[4, 4, 0],):
 
     input_niis = glob.glob(os.path.join(input_folder, '*Signal*noise*'))
-    print(os.path.join(input_folder, '*Signal*noise*'))
+    print((os.path.join(input_folder, '*Signal*noise*')))
     input_niis = [x for x in input_niis if 'jerk' not in x]
 
     for input_4d_nifti in input_niis:
 
         print(input_4d_nifti)
         input_4d_numpy = convert_input_2_numpy(input_4d_nifti)
-        print(input_4d_numpy.shape)
+        print((input_4d_numpy.shape))
         output_motion_array = generate_identity_affine(input_4d_numpy.shape[-1])
 
         if random_rotations > 0:
@@ -199,18 +199,18 @@ def Add_Head_Jerks(input_folder, random_rotations=5, random_duration_range=[4,9]
 
                 random_motion = generate_motion_jerk(duration=random_duration, timepoint=random_timepoint, rotation_peaks=[np.random.randint(*random_rotation_peaks[0]),np.random.randint(*random_rotation_peaks[1]),np.random.randint(*random_rotation_peaks[2])], total_timepoints=input_4d_numpy.shape[-1])
 
-                print(random_motion.shape)
-                print(output_motion_array.shape)
+                print((random_motion.shape))
+                print((output_motion_array.shape))
 
                 for t in range(input_4d_numpy.shape[-1]):
-                    print(output_motion_array[..., t])
+                    print((output_motion_array[..., t]))
 
                 output_motion_array = compose_affines(output_motion_array, random_motion)
 
             output_4d_numpy = np.zeros_like(input_4d_numpy)
 
             for t in range(input_4d_numpy.shape[-1]):
-                print(output_motion_array[..., t])
+                print((output_motion_array[..., t]))
                 output_4d_numpy[..., t] = apply_affine(input_4d_numpy[...,t], output_motion_array[...,t], method='slicer', Slicer_path="C:/Users/azb22/Documents/Software/SlicerNightly/Slicer_4.6.0/Slicer.exe")
 
         else:
@@ -261,9 +261,9 @@ def Generate_Deformable_Motion(input_dimensions = (3,3,4), output_dimensions = (
         # Jacobian_Matrix = get_jacobian_determinant(Deformable_Matrix)
         Jacobian_Matrix = np.gradient(np.cumsum(Deformable_Matrix[...,0], axis=0))[0]
 
-        print(np.cumsum(Deformable_Matrix[...,0], axis=0).shape)
-        print(Jacobian_Matrix[0].shape)
-        print((Jacobian_Matrix < 0).sum())
+        print((np.cumsum(Deformable_Matrix[...,0], axis=0).shape))
+        print((Jacobian_Matrix[0].shape))
+        print(((Jacobian_Matrix < 0).sum()))
 
         while (Jacobian_Matrix < 0).sum() > 0:
 
@@ -303,11 +303,11 @@ def Generate_Deformable_Motion(input_dimensions = (3,3,4), output_dimensions = (
                         print(index)
                         break
 
-            print((Jacobian_Matrix < 0).sum())
+            print(((Jacobian_Matrix < 0).sum()))
 
         Deformable_Matrix = rescale(Deformable_Matrix, -5, 10)
         Jacobian_Matrix = np.gradient(np.cumsum(Deformable_Matrix[...,0], axis=0))[0]
-        print((Jacobian_Matrix < 0).sum())
+        print(((Jacobian_Matrix < 0).sum()))
 
         # Upsample matrix
         Large_Deformable_Matrix = zoom(Deformable_Matrix, zoom_ratio + [1], order=1)
@@ -317,7 +317,7 @@ def Generate_Deformable_Motion(input_dimensions = (3,3,4), output_dimensions = (
         Large_Deformable_Matrix[...,0:2] = gaussian_filter(Large_Deformable_Matrix[...,0:2], sigma=1)
         Large_Deformable_Matrix[...,2] = gaussian_filter(Large_Deformable_Matrix[...,2], sigma=1)
 
-        print('SAVING MATRIX TIMEPOINT ', t)
+        print(('SAVING MATRIX TIMEPOINT ', t))
         Final_Deformation_Matrix[0:Large_Deformable_Matrix.shape[0],0:Large_Deformable_Matrix.shape[1],0:Large_Deformable_Matrix.shape[2],:,t] = Large_Deformable_Matrix
 
 

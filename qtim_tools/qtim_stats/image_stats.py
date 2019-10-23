@@ -37,8 +37,8 @@ def correlation_analysis(input_volume):
         compare_array_1 = image_numpy[slice_list]
         compare_array_2 = image_numpy[displacement_slice_list]
 
-        print(compare_array_1.shape)
-        print(compare_array_2.shape)
+        print((compare_array_1.shape))
+        print((compare_array_2.shape))
 
         correlation = np.corrcoef(compare_array_1.reshape(-1), compare_array_2.reshape(-1))
         print(correlation)

@@ -235,7 +235,7 @@ def generate_motion_jerk(duration, timepoint=0, rotation_peaks=[3, 3, 0], total_
     midpoint = timepoint + np.round(endpoint - timepoint)/2
     rotation_matrix_increment = np.array([float(x)/float(timepoint-endpoint) for x in rotation_peaks])
 
-    print(timepoint, endpoint, duration, total_timepoints)
+    print((timepoint, endpoint, duration, total_timepoints))
 
     if endpoint > total_timepoints:
         print('Invalid timepoint, longer than the duration of the volume')

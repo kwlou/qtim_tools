@@ -249,7 +249,7 @@ def simplex_optimize(contrast_image_numpy, contrast_AIF_numpy, time_interval_sec
         subunits = []
         sublength = np.floor(contrast_image_numpy.shape[0] / processes)
 
-        print('Dividing data into ' + str(processes) + ' subgroups of length.. ' + str(int(sublength)) + ' units.')
+        print(('Dividing data into ' + str(processes) + ' subgroups of length.. ' + str(int(sublength)) + ' units.'))
 
         for i in range(processes - 1):
             subunits += [contrast_image_numpy[int(i*sublength):int((i+1)*sublength),...]]
@@ -407,7 +407,7 @@ def calc_DCE_properties_batch(folder, regex='', recursive=False, T1_tissue=1000,
         for suffix in suffix_exclusion_regex:
             if suffix_exclusion_regex not in volume:
 
-                print('Working on volume located at... ' + volume)
+                print(('Working on volume located at... ' + volume))
 
                 calc_DCE_properties_single(volume, T1_tissue, T1_blood, relaxivity, TR, TE, scan_time_seconds, hematocrit, injection_start_time_seconds, flip_angle_degrees, label_file, label_suffix, label_value, mask_value, mask_threshold, T1_map_file, T1_map_suffix, AIF_label_file,  AIF_value_data, convert_AIF_values, AIF_mode, AIF_label_suffix, AIF_label_value, label_mode, param_file, default_population_AIF, initial_fitting_function_parameters, outputs, outfile_prefix, processes, gaussian_blur, gaussian_blur_axis)
 

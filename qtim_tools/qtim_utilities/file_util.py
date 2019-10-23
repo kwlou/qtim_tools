@@ -230,7 +230,7 @@ def replace_suffix(input_filepath, input_suffix, output_suffix, suffix_delimiter
         input_suffix = str.split(split_filename[0], suffix_delimiter)[-1]
 
     if input_suffix not in os.path.basename(input_filepath):
-        print('ERROR!', input_suffix, 'not in input_filepath.')
+        print(('ERROR!', input_suffix, 'not in input_filepath.'))
         return []
 
     else:

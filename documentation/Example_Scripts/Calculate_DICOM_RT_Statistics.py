@@ -102,8 +102,8 @@ def Compare_Segmentations(InputSeg, InputGroundTruth, InputVolume, OutputFolder,
             output_array[1,output_index + 2] = AVERAGE_DISTANCE
             output_index += 3
 
-            print(os.path.basename(os.path.join(mount_path, str.split(InputSeg_Base, '.')[0] + '_split', Label_Name + '.nii.gz')))
-            print(DICE, ' ', HAUSDORFF, ' ', AVERAGE_DISTANCE)
+            print((os.path.basename(os.path.join(mount_path, str.split(InputSeg_Base, '.')[0] + '_split', Label_Name + '.nii.gz'))))
+            print((DICE, ' ', HAUSDORFF, ' ', AVERAGE_DISTANCE))
 
             Labels.pop(Label_Name)
 

@@ -74,11 +74,11 @@ def generate_feature_list(input_file, label_file=None, features=['GLCM', 'morpho
 
                     print('')
                     print('Working on image...')
-                    print(imagename_list[image_idx])
+                    print((imagename_list[image_idx]))
                     print('Voxel sum...')
-                    print(np.sum(image))
+                    print((np.sum(image)))
                     print('Image shape...')
-                    print(image.shape)
+                    print((image.shape))
 
                     if filenames:
                         index = imagename_list[image_idx]
@@ -101,7 +101,7 @@ def generate_feature_list(input_file, label_file=None, features=['GLCM', 'morpho
 
     print('Raw Output:')
     for col_id in range(final_output.shape[1]):
-        print(label_output[0, col_id], final_output[:, col_id])
+        print((label_output[0, col_id], final_output[:, col_id]))
 
     if return_output:
         return final_output
@@ -150,11 +150,11 @@ def generate_feature_list_batch(folder, file_regex='*.nii*', features=['GLCM', '
 
                     print('')
                     print('Working on image...')
-                    print(imagename_list[image_idx])
+                    print((imagename_list[image_idx]))
                     print('Voxel sum...')
-                    print(np.sum(image))
+                    print((np.sum(image)))
                     print('Image shape...')
-                    print(image.shape)
+                    print((image.shape))
 
                     if filenames:
                         index = imagename_list[image_idx]
@@ -193,7 +193,7 @@ def generate_numpy_images(imagepath, labels=False, label_suffix='-label', set_la
 
     # This is likely redundant with the basic assert function in nifti_util
     if not nifti_util.assert_3D(image):
-        print('Warning: image at path ' + imagepath + ' has multiple time points or otherwise greater than 3 dimensions, and will be skipped.')
+        print(('Warning: image at path ' + imagepath + ' has multiple time points or otherwise greater than 3 dimensions, and will be skipped.'))
         return [[],[],[],[]]
 
     if labels:
@@ -217,14 +217,14 @@ def generate_numpy_images(imagepath, labels=False, label_suffix='-label', set_la
 
             # In the future: create an option to analyze each frame separately.
             if not nifti_util.assert_3D(label_image):
-                print('Warning: image at path ' + imagepath + ' has multiple time points or otherwise greater than 3 dimensions, and will be skipped.')
+                print(('Warning: image at path ' + imagepath + ' has multiple time points or otherwise greater than 3 dimensions, and will be skipped.'))
                 return [[],[],[],[]]
 
             label_image = label_image.astype(int)
             label_indices = np.unique(label_image)
 
             if label_indices.size == 1:
-                print('Warning: image at path ' + imagepath + ' has an empty label-map, and will be skipped.')
+                print(('Warning: image at path ' + imagepath + ' has an empty label-map, and will be skipped.'))
                 return[[],[],[],[]]
 
             # Will break if someone puts in '0' as a label to use.
@@ -264,10 +264,10 @@ def generate_numpy_images(imagepath, labels=False, label_suffix='-label', set_la
                     imagename_list += [filename]
 
             attributes_list += [nifti_util.return_nifti_attributes(imagepath)] * (label_indices.size - 1)
-            print('Finished... ' + str.split(imagepath, '\\')[-1])
+            print(('Finished... ' + str.split(imagepath, '\\')[-1]))
 
         else:
-            print('Warning: image at path ' + imagepath + ' has no label-map, and will be skipped.')
+            print(('Warning: image at path ' + imagepath + ' has no label-map, and will be skipped.'))
             return[[],[],[],[]]
 
     else:
