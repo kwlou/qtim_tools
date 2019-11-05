@@ -1,3 +1,5 @@
+#!/usr/bin/python3.4
+
 """ This function is meant to generate ROI-based statistics for QTIM
     volumes.
 """
@@ -8,12 +10,19 @@ import subprocess
 import pydicom
 import shutil
 import re
+import sys
 
 from qtim_tools.qtim_preprocessing.motion_correction import motion_correction
 from qtim_tools.qtim_preprocessing.skull_strip import skull_strip
 from qtim_tools.qtim_utilities.file_util import nifti_splitext
 from qtim_tools.qtim_dti.fit_dti import run_dtifit
 
+
+# def skull_strip():
+#   pathToROBEX = '/home/kenchang/ROBEX/runROBEX.sh'
+#   in_file =  /mnt/jk489/Jay/Projects/METS/patients/Pat1/MPRAGE.nii.gz
+#   out_file = /mnt/jk489/Jay/Projects/METS/patients/Pat1/MPRAGE_SS.nii.gz
+#   subprocess.call([pathToROBEX + ' ' + in_file + ' ' + out_file], shell=True)
 
 def qtim_dti_conversion(study_name, base_directory, specific_case=None, output_modalities=[], overwrite=False):
 
@@ -38,6 +47,8 @@ def qtim_dti_conversion(study_name, base_directory, specific_case=None, output_m
             All of the parameter maps to be outputted by the DTI conversion process.
 
     """
+
+    pathToROBEX = '/home/kwlou/ROBEX/runROBEX.sh'
 
     # TODO: write a file_utils function to grab files recursively with wildcards.
     studies = glob.glob(os.path.join(base_directory, study_name, 'RAWDATA', study_name + '*/'))
@@ -116,10 +127,19 @@ def qtim_dti_conversion(study_name, base_directory, specific_case=None, output_m
             run_fdt_rotate_bvecs(output_bvec_file, output_rotated_bvec_file, input_motion_file)
 
         # Run Skull-Stripping
-        skull_strip_mask = nifti_splitext(output_motion_file)[0] + '_ss_mask' + nifti_splitext(output_motion_file)[-1]
+        # skull_strip_mask = nifti_splitext(output_motion_file)[0] + '_ss_mask' + nifti_splitext(output_motion_file)[-1]
+        skull_strip_mask = '/qtim2/users/data/{2}/ANALYSIS/DTI/{0}/{1}/NEW_DTI/{0}-{1}-T1Pre_ss_mask_r_DTI_ADC.nii.gz'.format(patient_name,visit_name,study_name)
         skull_strip_output = nifti_splitext(output_motion_file)[0] + '_ss' + nifti_splitext(output_motion_file)[-1]
-        if overwrite or not os.path.exists(skull_strip_mask):
-            skull_strip(output_motion_file, skull_strip_output, skull_strip_mask, extra_parameters={'fsl_threshold': .1})
+        if (overwrite or not os.path.exists(skull_strip_mask)) and ((patient_name=='FMS_02' and visit_name=='VISIT_01') or (patient_name=='FMS_05' and visit_name=='VISIT_01') or (patient_name=='FMS_05' and visit_name='VISIT_02')):
+            # skull_strip(output_motion_file, skull_strip_output, skull_strip_mask, extra_parameters={'fsl_threshold': .1})
+            # subprocess.call([pathToROBEX + ' ' + output_motion_file + ' ' + skull_strip_mask], shell=True)
+            subprocess.call('mkdir /home/matrix_coreg',shell=True)
+            subprocess.call('/opt/Slicer-4.8.1-linux-amd64/Slicer --launch BRAINSFit --fixedVolume /data/ANALYSIS/DTI/{0}/{1}/NEW_DTI/{0}-{1}-DTI_MD.nii.gz --movingVolume /data/ANALYSIS/ANATOMICAL/{0}/{1}/{0}-{1}-T1Pre.nii.gz --transformType Rigid,ScaleVersor3D,ScaleSkewVersor3D,Affine --initializeTransformMode useMomentsAlign --interpolationMode Linear --outputVolume /data/ANALYSIS/DTI/{0}/{1}/NEW_DTI/{0}-{1}-T1_Pre_r_DTI_ADC.nii.gz --outputTransform home/matrix_coreg/{0}-{1}-T1_Pre_r_DTI_ADC.txt --samplingPercentage .02'.format(patient_name, visit_name),shell=True)
+            subprocess.call('/home/kwlou/ROBEX/runROBEX.sh /data/ANALYSIS/ANATOMICAL/{0}/{1}/{0}-{1}-T1Pre.nii.gz /data/ANALYSIS/ANATOMICAL/{0}/{1}/{0}-{1}-T1Pre_ss_mask.nii.gz'.format(patient_name,visit_name),shell=True)
+            subprocess.call('/opt/Slicer-4.8.1-linux-amd64/Slicer --launch ResampleScalarVectorDWIVolume /data/ANALYSIS/ANATOMICAL/{0}/{1}/{0}-{1}-T1Pre_ss_mask.nii.gz /data/ANALYSIS/DTI/{0}/{1}/NEW_DTI/{0}-{1}-T1Pre_ss_mask_r_DTI_ADC.nii.gz -R /data/ANALYSIS/DTI/{0}/{1}/NEW_DTI/{0}-{1}-DTI_MD.nii.gz -f ${rootdir9}/{0}-{1}-T1_Pre_r_DTI_ADC.txt -i nn'.format(patient_name,visit_name),shell=True)
+
+            file_prefix = '/ANALYSIS/DTI/{0}/{1}/NEW_DTI/{0}-{1}'.format(patient_name,visit_name)
+            run_dtifit(file_prefix + '-DTI_diff_mc.nii.gz', file_prefix + '-DTI_diff_t_rotated.bvec', file_prefix + '-DTI_diff.bval', input_mask='/data/ANALYSIS/DTI/{0}/{1}/NEW_DTI/{0}-{1}-T1Pre_ss_mask_r_DTI_ADC.nii.gz'.format(patient_name,visit_name), output_fileprefix=file_prefix+'-DTI_with_T1_ss')
 
         # Fit DTI
         output_prefix = os.path.join(output_folder, patient_name + '-' + visit_name + '-DTI')
@@ -131,17 +151,19 @@ def qtim_dti_conversion(study_name, base_directory, specific_case=None, output_m
 
 def run_fdt_rotate_bvecs(input_bvec, output_bvec, input_motion):
 
-    script_location = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'external', 'fdt_rotate_bvecs.sh'))
+    # script_location = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'external', 'fdt_rotate_bvecs.sh'))
 
-    print((' '.join([script_location, input_bvec, output_bvec, input_motion])))
+    script_location = '/home/abeers/Github/qtim_tools/qtim_tools/external/fdt_rotate_bvecs.sh'
+
+    print(' '.join([script_location, input_bvec, output_bvec, input_motion]))
 
     subprocess.call([script_location, input_bvec, output_bvec, input_motion])
 
 
 def run_1dtool(input_bvec, output_bvec):
 
-    print((input_bvec, output_bvec))
-    print((' '.join(['/home/abeers/abin/1d_tool.py', '-infile', input_bvec, '-transpose', '-write', output_bvec])))
+    print(input_bvec, output_bvec)
+    print(' '.join(['/home/abeers/abin/1d_tool.py', '-infile', input_bvec, '-transpose', '-write', output_bvec]))
     subprocess.call(['/home/abeers/abin/1d_tool.py', '-infile', input_bvec, '-transpose', '-write', output_bvec])
 
     return
@@ -161,7 +183,7 @@ def convert_DTI_nifti(volume, output_folder, output_file_prefix):
 
     # If we can't find any DICOMs in these folders, skip this volume.
     if not reference_dicom:
-        print(('No DICOMs found! Skipping folder... ', volume))
+        print('No DICOMs found! Skipping folder... ', volume)
         return False
 
     # Attempt to mine sequence, protocol, bvalue data from the reference DICOM.
@@ -253,3 +275,4 @@ def run_test():
 
 if __name__ == '__main__':
     run_test()
+    qtim_dti_conversion(sys.argv[1],sys.argv[2])
